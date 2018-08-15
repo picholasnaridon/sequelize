@@ -1,0 +1,94 @@
+<div class="jumbotron" style="text-align: center">
+  <h1 class="display-4">The Burger List</h1>
+  <br>
+  <input type="text" name="burgerName" id="burgerName" placeholder="Enter Burger Name">
+  <input type="submit" class="newBurger btn-success">
+</div>
+<div class="container">
+  <div class="grid">
+    <div class="row">
+      <div class="col">
+        <h1>Uneaten</h1>
+        <ul class="uneaten list-group">
+          {{#each burgers}} {{#unless devoured}}
+          <li class="burger{{id}} list-group-item" data-id={{id}}>{{name}}
+            <button class="btn-primary devour" data-id={{id}}>Devour</button>
+          </li> {{/unless}} {{/each}}
+        </ul>
+      </div>
+      <div class="col">
+        <h1>Eaten</h1>
+        <ul class="eaten list-group">
+          {{#each burgers}} {{#if devoured}}
+          <li class="burger{{id}} list-group-item" data-id={{id}}>{{name}}
+            <button class="btn-danger delete" data-id={{id}}>Delete</button>
+          </li> {{/if}} {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  // EAT BURGER
+
+  $(document).on("click", '.devour', function (e) {
+    var id = $(this).data("id")
+    console.log(id)
+    $.ajax({
+      url: '/api/burgers/' + id + '/eat',
+      method: 'put',
+      data: { id: id, devoured: 1 },
+      success: function (res) {
+        console.log("updated, response: ")
+        var eatenBurger = $(`.burger${id}`);
+        eatenBurger.remove()
+        eatenBurger.children().remove()
+        $('.eaten').append(eatenBurger)
+        $(eatenBurger).append(`<button class="btn-danger delete" data-id=${id}>Delete</button>`)
+      },
+      error: function (err) {
+        console.log(err)
+      }
+    })
+  })
+
+
+  /// CREATE BURGER
+
+
+  $(document).on("click", '.newBurger', function (e) {
+    e.preventDefault()
+    var name = $('#burgerName').val()
+    $.ajax({
+      url: '/api/burgers',
+      method: 'post',
+      data: { name: name, devoured: 0 },
+      success: function (res) {
+        console.log(res)
+        $(".uneaten").append(
+          `<li class="burger${res[1]} list-group-item" data-id=${res[1]}>${res.name}
+              <button class="devour btn-primary" data-id=${res[1]}>Devour</button>
+            </li>`
+        )
+      }
+    })
+    $('#burgerName').val('')
+  })
+
+  //DELETE BURGER
+
+  $(document).on("click", '.delete', function (e) {
+    e.preventDefault()
+    var id = $(this).data("id")
+    $.ajax({
+      url: '/api/burgers/' + id + '/delete',
+      method: 'delete',
+      data: { id: id },
+      success: function (res) {
+        $(`.burger${id}`).remove()
+      }
+    })
+  })
+</script>
