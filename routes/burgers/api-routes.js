@@ -1,4 +1,4 @@
-var burgersController = require('../../controllers/api/burgers')
+var burgersController = require('../../controllers/burgers/api/burgers')
 
 module.exports = function (app) {
 
@@ -11,7 +11,5 @@ module.exports = function (app) {
   app.put("/api/burgers/:id/eat", burgersController.eat)
 
   app.post('/api/burgers', burgersController.post)
-
-
 
 };

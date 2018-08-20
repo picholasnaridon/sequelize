@@ -1,4 +1,4 @@
-const models = require("../../models");
+const models = require("../../../models");
 
 module.exports = {
   // API ONLY
@@ -40,7 +40,7 @@ module.exports = {
           id: req.params.id
         }
       }).then(function (results) {
-        res.json(results)
+        return res.json(results)
       })
   }
 }; 

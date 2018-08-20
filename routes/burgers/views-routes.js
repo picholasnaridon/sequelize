@@ -1,4 +1,4 @@
-var burgersController = require('../../controllers/views/burgers')
+var burgersController = require('../../controllers/burgers/views/burgers')
 
 module.exports = function (app) {
   app.get("/", burgersController.index)

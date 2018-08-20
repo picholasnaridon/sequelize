@@ -1,6 +1,7 @@
 <div class="jumbotron" style="text-align: center">
   <h1 class="display-4">The Burger List</h1>
   <br>
+  <input type="text" name="userName" id="userName" placeholder="Enter Name">
   <input type="text" name="burgerName" id="burgerName" placeholder="Enter Burger Name">
   <input type="submit" class="newBurger btn-success">
 </div>
@@ -11,9 +12,13 @@
         <h1>Uneaten</h1>
         <ul class="uneaten list-group">
           {{#each burgers}} {{#unless devoured}}
-          <li class="burger{{id}} list-group-item" data-id={{id}}>{{name}}
-            <button class="btn-primary devour" data-id={{id}}>Devour</button>
-          </li> {{/unless}} {{/each}}
+          <li class="burger{{id}} list-group-item">
+            <p><a href="/users/{{User.id}}/burgers">{{User.name}}</a> created:</p>
+            <div class=" data-id={{id}}"><a href="/burgers/{{id}}">{{name}}</a>
+              <button class="btn-primary devour" data-id={{id}}>Devour</button>
+            </div>
+            {{/unless}} {{/each}}
+          </li>
         </ul>
       </div>
       <div class="col">
@@ -41,12 +46,7 @@
       method: 'put',
       data: { id: id, devoured: 1 },
       success: function (res) {
-        console.log("updated, response: ")
-        var eatenBurger = $(`.burger${id}`);
-        eatenBurger.remove()
-        eatenBurger.children().remove()
-        $('.eaten').append(eatenBurger)
-        $(eatenBurger).append(`<button class="btn-danger delete" data-id=${id}>Delete</button>`)
+        window.location.replace("/")
       },
       error: function (err) {
         console.log(err)
@@ -60,21 +60,18 @@
 
   $(document).on("click", '.newBurger', function (e) {
     e.preventDefault()
-    var name = $('#burgerName').val()
+    var userName = $('#userName').val()
+    var burgerName = $('#burgerName').val()
     $.ajax({
-      url: '/api/burgers',
+      url: '/api/user/burger',
       method: 'post',
-      data: { name: name, devoured: 0 },
+      data: { userName: userName, burgerName: burgerName },
       success: function (res) {
         console.log(res)
-        $(".uneaten").append(
-          `<li class="burger${res[1]} list-group-item" data-id=${res[1]}>${res.name}
-              <button class="devour btn-primary" data-id=${res[1]}>Devour</button>
-            </li>`
-        )
+        window.location.replace("/")
+
       }
     })
-    $('#burgerName').val('')
   })
 
   //DELETE BURGER
@@ -87,7 +84,7 @@
       method: 'delete',
       data: { id: id },
       success: function (res) {
-        $(`.burger${id}`).remove()
+        window.location.replace("/")
       }
     })
   })
